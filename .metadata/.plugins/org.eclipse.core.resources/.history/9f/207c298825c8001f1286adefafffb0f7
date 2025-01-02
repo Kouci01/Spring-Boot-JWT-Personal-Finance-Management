@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finance.management.mapper.ExpenseMapper">
+    <insert id="insertExpense">
+        INSERT INTO expenses (user_id, amount, description, date)
+        VALUES (#{userId}, #{amount}, #{description}, #{date})
+    </insert>
+    <select id="findExpensesByUserId" resultType="com.example.finance.model.Expense">
+        SELECT * FROM expenses WHERE user_id = #{userId}
+    </select>
+</mapper>

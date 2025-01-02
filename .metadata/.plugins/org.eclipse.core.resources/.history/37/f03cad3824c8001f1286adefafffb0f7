@@ -1,0 +1,9 @@
+<mapper namespace="com.example.finance.mapper.ExpenseMapper">
+    <insert id="insertExpense">
+        INSERT INTO expenses (user_id, amount, description, date)
+        VALUES (#{userId}, #{amount}, #{description}, #{date})
+    </insert>
+    <select id="findExpensesByUserId" resultType="com.example.finance.model.Expense">
+        SELECT * FROM expenses WHERE user_id = #{userId}
+    </select>
+</mapper>

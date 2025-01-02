@@ -1,0 +1,6 @@
+package mapper;
+
+public interface ExpenseMapper {
+	void insertExpense(Expense expense);
+    List<Expense> findExpensesByUserId(Long userId);
+}
