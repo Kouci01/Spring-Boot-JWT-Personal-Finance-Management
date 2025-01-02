@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finance.management.mapper.UserMapper">
+    <insert id="addUser" parameterType="com.finance.management.model.User">
+        INSERT INTO users (name, email, password)
+        VALUES (#{name}, #{email}, #{password})
+    </insert>
+
+    <select id="findByEmail" parameterType="string" resultType="com.finance.management.model.User">
+        SELECT * FROM users
+        <where>
+            <if test="email!=null and ''!=email">
+                <bind name="emailLike" value="'%' + email + '%'"/>
+                and email like #{emailLike}
+            </if>
+        </where>
+    </select>
+</mapper>
