@@ -5,6 +5,8 @@ import com.finance.management.controller.dto.LoginRequestDTO;
 import com.finance.management.controller.dto.LoginResponse;
 import com.finance.management.controller.dto.SignUpRequestDTO;
 import com.finance.management.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +36,15 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequestDTO request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequestDTO request, HttpServletResponse response) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         String token = JwtHelper.generateToken(request.email());
+        Cookie jwtCookie = new Cookie("jwt", token);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(7200);
+        response.addCookie(jwtCookie);
         return ResponseEntity.ok(new LoginResponse(request.email(), token));
     }
 }

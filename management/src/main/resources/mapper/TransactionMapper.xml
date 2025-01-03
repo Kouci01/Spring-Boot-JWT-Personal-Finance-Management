@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.finance.management.mapper.TransactionMapper">
     <insert id="insertTransaction" parameterType="com.finance.management.model.Transaction">
-        INSERT INTO transactions (amount, description, category_id, date)
-        VALUES (#{amount}, #{description}, #{categoryId}, CURDATE())
+        INSERT INTO transactions (amount, description, user_id, category_id, date)
+        VALUES (#{amount}, #{description}, #{userId} ,#{categoryId}, CURDATE())
     </insert>
     <select id="getTransactions" parameterType="com.finance.management.model.Transaction" resultType="com.finance.management.model.Transaction">
         SELECT t.*, c.name as category_name FROM transactions t
@@ -21,6 +21,9 @@
             </if>
             <if test="categoryName!=null and ''!=categoryName">
                 and c.name = #{categoryName}
+            </if>
+            <if test="userId!=null and ''!=userId">
+                and t.user_id = #{userId}
             </if>
         </where>
     </select>
