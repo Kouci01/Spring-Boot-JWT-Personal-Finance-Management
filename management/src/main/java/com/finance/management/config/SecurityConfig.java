@@ -41,7 +41,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/signup/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/authentication-docs/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/api/finance/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/finance/**").authenticated()
+                        .anyRequest().permitAll())
                 .authenticationManager(authenticationManager)
 
 //        Add JWT token filter
