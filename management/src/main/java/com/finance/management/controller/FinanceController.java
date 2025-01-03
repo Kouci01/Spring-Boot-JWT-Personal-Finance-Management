@@ -6,7 +6,6 @@ import com.finance.management.model.Transaction;
 import com.finance.management.model.User;
 import com.finance.management.service.FinanceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
