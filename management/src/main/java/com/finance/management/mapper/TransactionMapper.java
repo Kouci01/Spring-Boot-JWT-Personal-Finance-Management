@@ -8,5 +8,5 @@ import java.util.List;
 @Mapper // Optional if you use @MapperScan in MyBatisConfig
 public interface TransactionMapper {
 	void insertTransaction(Transaction transaction);
-    List<Transaction> getTransactionsByCategory(Long categoryId);
+    List<Transaction> getTransactions(Transaction transaction);
 }

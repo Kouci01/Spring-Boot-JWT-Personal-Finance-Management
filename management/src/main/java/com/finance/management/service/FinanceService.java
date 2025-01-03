@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface FinanceService {
     void addTransaction(Transaction transaction);
-    List<Transaction> getTransactionsByCategory(Long categoryId);
+    List<Transaction> getTransactions(Transaction transaction);
 }

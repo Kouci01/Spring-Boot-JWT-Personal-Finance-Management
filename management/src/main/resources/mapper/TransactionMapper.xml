@@ -3,10 +3,25 @@
 <mapper namespace="com.finance.management.mapper.TransactionMapper">
     <insert id="insertTransaction" parameterType="com.finance.management.model.Transaction">
         INSERT INTO transactions (amount, description, category_id, date)
-        VALUES (#{amount}, #{description}, #{categoryId}, CURDATE());
+        VALUES (#{amount}, #{description}, #{categoryId}, CURDATE())
     </insert>
-
-    <select id="getTransactionsByCategory" parameterType="long" resultType="com.finance.management.model.Transaction">
-        SELECT * FROM transactions WHERE category_id = #{categoryId};
+    <select id="getTransactions" parameterType="com.finance.management.model.Transaction" resultType="com.finance.management.model.Transaction">
+        SELECT t.*, c.name as category_name FROM transactions t
+        JOIN categories c ON t.category_id = c.id
+        <where>
+            <if test="categoryId!=null and ''!=categoryId">
+                and t.category_id = #{categoryId}
+            </if>
+            <if test="amount!=null and ''!=amount">
+                and t.amount >= #{amount}
+            </if>
+            <if test="description!=null and ''!=description">
+                <bind name="descriptionLike" value="'%' + description + '%'"/>
+                and t.description like #{descriptionLike}
+            </if>
+            <if test="categoryName!=null and ''!=categoryName">
+                and c.name = #{categoryName}
+            </if>
+        </where>
     </select>
 </mapper>

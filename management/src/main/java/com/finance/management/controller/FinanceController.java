@@ -24,8 +24,8 @@ public class FinanceController {
         return ResponseEntity.ok("Transaction added successfully");
     }
 
-    @GetMapping("/transactions/{categoryId}")
-    public List<Transaction> getTransactions(@PathVariable Long categoryId) {
-        return financeService.getTransactionsByCategory(categoryId);
+    @GetMapping("/transactions")
+    public List<Transaction> getTransactions(Transaction transaction) {
+        return financeService.getTransactions(transaction);
     }
 }

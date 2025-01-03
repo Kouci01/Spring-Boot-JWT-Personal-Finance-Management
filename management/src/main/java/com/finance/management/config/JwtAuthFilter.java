@@ -18,11 +18,11 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImpl userDetailsService;
     private final ObjectMapper objectMapper;
 
-    public JwtAuthenticationFilter(UserDetailsServiceImpl userDetailsService, ObjectMapper objectMapper) {
+    public JwtAuthFilter(UserDetailsServiceImpl userDetailsService, ObjectMapper objectMapper) {
         this.userDetailsService = userDetailsService;
         this.objectMapper = objectMapper;
     }

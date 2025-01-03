@@ -24,7 +24,7 @@ public class FinanceServiceImpl implements FinanceService {
     }
 
     @Override
-    public List<Transaction> getTransactionsByCategory(Long categoryId) {
-        return transactionMapper.getTransactionsByCategory(categoryId);
+    public List<Transaction> getTransactions(Transaction transaction) {
+        return transactionMapper.getTransactions(transaction);
     }
 }
