@@ -10,6 +10,24 @@ public class Transaction {
 	private Long categoryId;
 	private Date date;
 	private String categoryName;
+	private String startDate;
+	private String endDate;
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
 
 	public Long getUserId() {
 		return userId;

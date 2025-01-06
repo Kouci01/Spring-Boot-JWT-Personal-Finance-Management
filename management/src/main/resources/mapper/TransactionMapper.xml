@@ -3,7 +3,10 @@
 <mapper namespace="com.finance.management.mapper.TransactionMapper">
     <insert id="insertTransaction" parameterType="com.finance.management.model.Transaction">
         INSERT INTO transactions (amount, description, user_id, category_id, date)
-        VALUES (#{amount}, #{description}, #{userId} ,#{categoryId}, CURDATE())
+        VALUES
+        <foreach collection="transaction" item="tr" separator=",">
+            (#{tr.amount}, #{tr.description}, #{tr.userId} ,#{tr.categoryId}, CURDATE())
+        </foreach>
     </insert>
     <select id="getTransactions" parameterType="com.finance.management.model.Transaction" resultType="com.finance.management.model.Transaction">
         SELECT t.*, c.name as category_name FROM transactions t
@@ -26,5 +29,25 @@
                 and t.user_id = #{userId}
             </if>
         </where>
+    </select>
+
+    <select id="incomeExpenseSummary" parameterType="com.finance.management.model.Transaction" resultType="com.finance.management.model.Summary">
+        SELECT
+            c.name AS categoryName,
+            COALESCE(SUM(t.amount), 0) AS total
+        FROM categories c
+        LEFT JOIN transactions t ON
+            c.id = t.category_id AND t.user_id = #{userId} AND t.date BETWEEN #{startDate} AND #{endDate}
+        GROUP BY
+            c.name
+    </select>
+
+    <select id="yearlyTrends" parameterType="com.finance.management.model.Transaction" resultType="com.finance.management.model.Summary">
+        SELECT YEAR(t.date) AS year, MONTH(t.date) AS month, SUM(t.amount) AS total
+        FROM transactions t
+        JOIN categories c ON c.id = t.category_id
+        WHERE user_id = #{userId} and c.name = #{categoryName}
+        GROUP BY YEAR(t.date), MONTH(t.date)
+        ORDER BY year, month
     </select>
 </mapper>

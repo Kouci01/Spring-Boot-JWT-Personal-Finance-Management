@@ -3,7 +3,10 @@
 <mapper namespace="com.finance.management.mapper.CategoryMapper">
     <insert id="insertCategory" parameterType="com.finance.management.model.Category">
         INSERT INTO categories (name)
-        VALUES (#{name})
+        VALUES
+        <foreach collection="category" item="ctg" separator=",">
+            (#{ctg.name})
+        </foreach>
     </insert>
     <select id="getCategories" parameterType="com.finance.management.model.Category" resultType="com.finance.management.model.Category">
         SELECT * FROM categories

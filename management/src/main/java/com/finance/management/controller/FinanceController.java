@@ -2,6 +2,7 @@ package com.finance.management.controller;
 
 import com.finance.management.config.JwtHelper;
 import com.finance.management.mapper.UserMapper;
+import com.finance.management.model.Summary;
 import com.finance.management.model.Transaction;
 import com.finance.management.model.User;
 import com.finance.management.service.FinanceService;
@@ -25,13 +26,13 @@ public class FinanceController {
     }
 
     @PostMapping("/transactions")
-    public ResponseEntity<?> addTransaction(@RequestBody Transaction transaction,
+    public ResponseEntity<?> addTransaction(@RequestBody List<Transaction> transactions,
                                                  @CookieValue(value = "jwt", defaultValue = "None") String token) {
         String email = JwtHelper.extractUsername(token);
         Optional<User> user= userMapper.findByEmail(email);
         if(user.isPresent()){
-            transaction.setUserId(user.get().getId());
-            financeService.addTransaction(transaction);
+            transactions.forEach(transaction -> transaction.setUserId(user.get().getId()));
+            financeService.addTransaction(transactions);
             return ResponseEntity.ok("Transaction added successfully");
         }else{
             return ResponseEntity.badRequest().body("Internal Error");
@@ -48,5 +49,15 @@ public class FinanceController {
             return ResponseEntity.ok(financeService.getTransactions(transaction));
         }
         return ResponseEntity.ok(List.of());
+    }
+
+    @GetMapping("/transactions/summary")
+    public ResponseEntity<List<Summary>> getSummary(@RequestBody Transaction transaction){
+        return ResponseEntity.ok(financeService.incomeExpenseSummary(transaction));
+    }
+
+    @GetMapping("/transactions/yearly")
+    public ResponseEntity<List<Summary>> getYearly(@RequestBody Transaction transaction){
+        return ResponseEntity.ok(financeService.yearlyTrends(transaction));
     }
 }
