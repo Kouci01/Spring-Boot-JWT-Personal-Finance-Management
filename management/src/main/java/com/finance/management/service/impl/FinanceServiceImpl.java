@@ -25,6 +25,11 @@ public class FinanceServiceImpl implements FinanceService {
     }
 
     @Override
+    public void updateTransaction(Transaction transaction) {
+        transactionMapper.updateTransaction(transaction);
+    }
+
+    @Override
     public List<Transaction> getTransactions(Transaction transaction) {
         return transactionMapper.getTransactions(transaction);
     }

@@ -1,9 +1,15 @@
 package com.finance.management.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.finance.management.config.NonZeroAndNonNullFilter;
+
 public class Summary {
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private String categoryName;
     private double total;
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NonZeroAndNonNullFilter.class)
     private int year;
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NonZeroAndNonNullFilter.class)
     private int month;
 
     public int getYear() {

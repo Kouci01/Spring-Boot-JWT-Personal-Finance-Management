@@ -6,16 +6,15 @@ import com.finance.management.controller.dto.LoginResponse;
 import com.finance.management.controller.dto.SignUpRequestDTO;
 import com.finance.management.service.UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -46,5 +45,19 @@ public class UserController {
         jwtCookie.setMaxAge(7200);
         response.addCookie(jwtCookie);
         return ResponseEntity.ok(new LoginResponse(request.email(), token));
+    }
+
+    @GetMapping("/login")
+    public String loginRes(String error, HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if(error.equals("true")){
+            return "Login failed";
+        }else{
+            if (session != null) {
+                String jwtToken = (String) session.getAttribute("jwt");
+                return "Login Success" + " JWT Token from session: " + jwtToken; // Log session attribute
+            }
+            return "Login Success";
+        }
     }
 }

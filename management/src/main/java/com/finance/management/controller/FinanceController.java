@@ -26,7 +26,7 @@ public class FinanceController {
     }
 
     @PostMapping("/transactions")
-    public ResponseEntity<?> addTransaction(@RequestBody List<Transaction> transactions,
+    public ResponseEntity<?> addTransactions(@RequestBody List<Transaction> transactions,
                                                  @CookieValue(value = "jwt", defaultValue = "None") String token) {
         String email = JwtHelper.extractUsername(token);
         Optional<User> user= userMapper.findByEmail(email);
@@ -39,8 +39,14 @@ public class FinanceController {
         }
     }
 
+    @PutMapping("/transactions")
+    public ResponseEntity<?> updateTransaction(Transaction transaction){
+        financeService.updateTransaction(transaction);
+        return ResponseEntity.ok("Transaction have been updated");
+    }
+
     @GetMapping("/transactions")
-    public ResponseEntity<List<Transaction>> getTransactions(Transaction transaction,
+    public ResponseEntity<?> getTransactions(Transaction transaction,
                                              @CookieValue(value = "jwt", defaultValue = "None") String token) {
         String email = JwtHelper.extractUsername(token);
         Optional<User> user = userMapper.findByEmail(email);
@@ -48,16 +54,30 @@ public class FinanceController {
             transaction.setUserId(user.get().getId());
             return ResponseEntity.ok(financeService.getTransactions(transaction));
         }
-        return ResponseEntity.ok(List.of());
+        return ResponseEntity.badRequest().body("Token authorization is expired");
     }
 
     @GetMapping("/transactions/summary")
-    public ResponseEntity<List<Summary>> getSummary(@RequestBody Transaction transaction){
-        return ResponseEntity.ok(financeService.incomeExpenseSummary(transaction));
+    public ResponseEntity<?> getSummary(Transaction transaction,
+                                        @CookieValue(value = "jwt", defaultValue = "None") String token){
+        String email = JwtHelper.extractUsername(token);
+        Optional<User> user = userMapper.findByEmail(email);
+        if(user.isPresent()){
+            transaction.setUserId(user.get().getId());
+            return ResponseEntity.ok(financeService.incomeExpenseSummary(transaction));
+        }
+        return ResponseEntity.badRequest().body("Token authorization is expired");
     }
 
     @GetMapping("/transactions/yearly")
-    public ResponseEntity<List<Summary>> getYearly(@RequestBody Transaction transaction){
-        return ResponseEntity.ok(financeService.yearlyTrends(transaction));
+    public ResponseEntity<?> getYearly(Transaction transaction,
+                                                   @CookieValue(value = "jwt", defaultValue = "None") String token){
+        String email = JwtHelper.extractUsername(token);
+        Optional<User> user = userMapper.findByEmail(email);
+        if(user.isPresent()){
+            transaction.setUserId(user.get().getId());
+            return ResponseEntity.ok(financeService.yearlyTrends(transaction));
+        }
+        return ResponseEntity.badRequest().body("Token authorization is expired");
     }
 }

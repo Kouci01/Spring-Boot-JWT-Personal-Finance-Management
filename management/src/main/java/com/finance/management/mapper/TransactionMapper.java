@@ -9,6 +9,7 @@ import java.util.List;
 @Mapper // Optional if you use @MapperScan in MyBatisConfig
 public interface TransactionMapper {
 	void insertTransaction(List<Transaction> transaction);
+    void updateTransaction(Transaction transaction);
     List<Transaction> getTransactions(Transaction transaction);
     List<Summary> incomeExpenseSummary(Transaction transaction);
     List<Summary> yearlyTrends(Transaction transaction);
