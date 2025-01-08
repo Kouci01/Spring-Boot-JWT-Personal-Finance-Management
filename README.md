@@ -72,3 +72,5 @@ is a robust and secure platform designed to help users manage their finances eff
 2. Performance: MyBatis ensures optimized database interaction, reducing overhead.
 3. Security: Leveraging Spring Security with JWT ensures robust protection against unauthorized access.
 4. Maintainability: Clean separation of layers and the use of MyBatis for SQL management make the application easy to maintain and extend.
+
+## Note for Implementation of JWT and oAuth2.0 Spring Security
