@@ -14,17 +14,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationProvider;
-import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.endpoint.RestClientAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.List;
 
 @EnableWebSecurity
 @Configuration
@@ -56,7 +54,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/finance/**").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(oauth2 -> oauth2
-                .loginPage("/oauth2/authorization/google") // Trigger Google login
+//                .loginPage("/oauth2/authorization/google") // Trigger Google login
                 .successHandler(new OAuth2LoginSuccessHandler()) // Handle successful login
                 .failureHandler(new OAuth2LoginFailureHandler())) // Redirect after failure
                 .authenticationProvider(oAuth2LoginAuthenticationProvider(accessTokenResponseClient(), oAuth2UserService()))
@@ -77,7 +75,7 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-        return new DefaultAuthorizationCodeTokenResponseClient();
+        return new RestClientAuthorizationCodeTokenResponseClient();
     }
 
     @Bean

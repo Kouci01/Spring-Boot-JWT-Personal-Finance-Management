@@ -6,7 +6,12 @@ import com.finance.management.model.Summary;
 import com.finance.management.model.Transaction;
 import com.finance.management.model.User;
 import com.finance.management.service.FinanceService;
+import com.finance.management.service.UserService;
+import com.finance.management.utils.EmailUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,17 +23,19 @@ import java.util.Optional;
 public class FinanceController {
     private final FinanceService financeService;
     private final UserMapper userMapper;
+    private final UserService userService;
 
     @Autowired
-    public FinanceController(FinanceService financeService, UserMapper userMapper){
+    public FinanceController(FinanceService financeService, UserMapper userMapper, UserService userService){
         this.financeService = financeService;
         this.userMapper = userMapper;
+        this.userService = userService;
     }
 
     @PostMapping("/transactions")
     public ResponseEntity<?> addTransactions(@RequestBody List<Transaction> transactions,
-                                                 @CookieValue(value = "jwt", defaultValue = "None") String token) {
-        String email = JwtHelper.extractUsername(token);
+                                             HttpServletRequest request) {
+        String email = getEmail(request);
         Optional<User> user= userMapper.findByEmail(email);
         if(user.isPresent()){
             transactions.forEach(transaction -> transaction.setUserId(user.get().getId()));
@@ -47,8 +54,8 @@ public class FinanceController {
 
     @GetMapping("/transactions")
     public ResponseEntity<?> getTransactions(Transaction transaction,
-                                             @CookieValue(value = "jwt", defaultValue = "None") String token) {
-        String email = JwtHelper.extractUsername(token);
+                                             HttpServletRequest request) {
+        String email = getEmail(request);
         Optional<User> user = userMapper.findByEmail(email);
         if(user.isPresent()){
             transaction.setUserId(user.get().getId());
@@ -59,8 +66,8 @@ public class FinanceController {
 
     @GetMapping("/transactions/summary")
     public ResponseEntity<?> getSummary(Transaction transaction,
-                                        @CookieValue(value = "jwt", defaultValue = "None") String token){
-        String email = JwtHelper.extractUsername(token);
+                                        HttpServletRequest request){
+        String email = getEmail(request);
         Optional<User> user = userMapper.findByEmail(email);
         if(user.isPresent()){
             transaction.setUserId(user.get().getId());
@@ -71,13 +78,25 @@ public class FinanceController {
 
     @GetMapping("/transactions/yearly")
     public ResponseEntity<?> getYearly(Transaction transaction,
-                                                   @CookieValue(value = "jwt", defaultValue = "None") String token){
-        String email = JwtHelper.extractUsername(token);
+                                       HttpServletRequest request){
+        String email = getEmail(request);
         Optional<User> user = userMapper.findByEmail(email);
         if(user.isPresent()){
             transaction.setUserId(user.get().getId());
             return ResponseEntity.ok(financeService.yearlyTrends(transaction));
         }
         return ResponseEntity.badRequest().body("Token authorization is expired");
+    }
+
+    private String getEmail(HttpServletRequest request){
+        String bearer =  request.getHeader("Authorization");
+        String jwtToken = bearer.substring(7);
+        String email = JwtHelper.extractUsername(jwtToken);
+
+        if(EmailUtils.isEmailDots(email)){
+            email = EmailUtils.revertDotsBeforeAt(email, '.');
+        }
+
+        return email;
     }
 }

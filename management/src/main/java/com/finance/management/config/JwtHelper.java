@@ -13,6 +13,7 @@ import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.regex.Matcher;
 
 public class JwtHelper {
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
@@ -29,7 +30,11 @@ public class JwtHelper {
     }
 
     public static String extractUsername(String token) {
-        return getTokenBody(token).getSubject();
+        String username = getTokenBody(token).getSubject();
+        if(isEmailDots(username)){
+            username = revertDotsBeforeAt(username, '.');
+        }
+        return username;
     }
 
     public static Boolean validateToken(String token, UserDetails userDetails) {
@@ -52,5 +57,19 @@ public class JwtHelper {
     private static boolean isTokenExpired(String token) {
         Claims claims = getTokenBody(token);
         return claims.getExpiration().before(new Date());
+    }
+
+    private static String revertDotsBeforeAt(String email, char replacement) {
+        if (email == null || email.isEmpty()) {
+            return email;
+        }
+        String replacementStr = Matcher.quoteReplacement(String.valueOf(replacement));
+        return email.replaceAll("\\$(?=[^@]+@)", replacementStr);
+    }
+
+    private static boolean isEmailDots(String email) {
+        String regex = "^[^@]*\\$[^@]*@.*";
+        boolean result = email.matches(regex);
+        return result;
     }
 }

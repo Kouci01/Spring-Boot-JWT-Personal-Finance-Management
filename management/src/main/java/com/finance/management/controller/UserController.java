@@ -4,7 +4,9 @@ import com.finance.management.config.JwtHelper;
 import com.finance.management.controller.dto.LoginRequestDTO;
 import com.finance.management.controller.dto.LoginResponse;
 import com.finance.management.controller.dto.SignUpRequestDTO;
+import com.finance.management.model.User;
 import com.finance.management.service.UserService;
+import com.finance.management.utils.EmailUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class UserController {
-
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
@@ -48,16 +49,29 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String loginRes(String error, HttpServletRequest request){
+    public ResponseEntity<?> loginRes(String error, HttpServletRequest request){
         HttpSession session = request.getSession(false);
         if(error.equals("true")){
-            return "Login failed";
+            return ResponseEntity.badRequest().body("Login Error");
         }else{
             if (session != null) {
                 String jwtToken = (String) session.getAttribute("jwt");
-                return "Login Success" + " JWT Token from session: " + jwtToken; // Log session attribute
+                String email = JwtHelper.extractUsername(jwtToken);
+                if(EmailUtils.isEmailDots(email)){
+                    email = EmailUtils.revertDotsBeforeAt(email, '.');
+                }
+                String name = email.split("@")[0];
+
+                User user = new User();
+                user.setName(name);
+                user.setEmail(email);
+                userService.signUpGoogle(user);
+
+                return ResponseEntity.ok(jwtToken);
             }
-            return "Login Success";
+            return ResponseEntity.ok("Login Success But Token Error");
         }
     }
+
+
 }
