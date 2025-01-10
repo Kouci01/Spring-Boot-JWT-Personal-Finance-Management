@@ -120,7 +120,7 @@ The Personal Finance Management application is a robust and secure platform desi
 ### Development Notes:
 - **OAuth 2.0 with Google Authentication**:
     - For oAuth2.0 if got redirect back to authentication form, make sure debug the flow of authentication in the backend including the token authorization such as doFilterinternal
-    - JWT only can parse email without '.' before @ (ex: test.test@example.com). Solution: Change '.' in the email to another character such as $,#, but don't forget each JWT translation change it back to the correct email format.
+    - JWT only can parse email without '.' before @ (ex: test.test@example.com). Solution: Change '.' in the email to another character such as $,# (ex: test#test@example.com) but don't forget each JWT translation change it back to the correct email format.
     - DefaultAuthorizationCodeTokenResponseClient for OAuth2AccessTokenResponseClient is deprecated, use other such as RestClientAuthorizationCodeTokenResponseClient
     - For oAuth2.0 if use custom authenticationManager for JWT, make sure to set authenticationProvider (the parameter can use the default one).
 - **Role-based Access Control and Profile Management**: Currently under development to enhance user and admin functionalities.
