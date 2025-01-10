@@ -120,8 +120,12 @@ The Personal Finance Management application is a robust and secure platform desi
 ### Development Notes:
 - **OAuth 2.0 with Google Authentication**:
     - For oAuth2.0 if got redirect back to authentication form, make sure debug the flow of authentication in the backend including the token authorization such as doFilterinternal
+    ![image](https://github.com/user-attachments/assets/4bbb9e17-36ea-4cb5-bdf4-0e42306656d2)
     - JWT only can parse email without '.' before @ (ex: test.test@example.com). Solution: Change '.' in the email to another character such as $,# (ex: test#test@example.com) but don't forget each JWT translation change it back to the correct email format.
-    - DefaultAuthorizationCodeTokenResponseClient for OAuth2AccessTokenResponseClient is deprecated, use other such as RestClientAuthorizationCodeTokenResponseClient
+    ![image](https://github.com/user-attachments/assets/58312fc1-a806-47bb-803b-900bb7d16d6a)
+    - DefaultAuthorizationCodeTokenResponseClient for OAuth2AccessTokenResponseClient is deprecated, use other such as RestClientAuthorizationCodeTokenResponseClient.
+    ![image](https://github.com/user-attachments/assets/8aba986a-fa31-4ca2-8103-96f57d81c312)
     - For oAuth2.0 if use custom authenticationManager for JWT, make sure to set authenticationProvider (the parameter can use the default one).
+    ![image](https://github.com/user-attachments/assets/97f2ef15-7d36-46e8-8f6c-75b3f8809fa9) ![image](https://github.com/user-attachments/assets/95796043-8359-4131-b612-84a98af9b41b)
 - **Role-based Access Control and Profile Management**: Currently under development to enhance user and admin functionalities.
 - **The flow of oAuth and JWT**: User -> Front End request Back End -> Google authentication -> give respond and generate JWT for the Google authentication user info -> Use the JWT for each request -> Backend use the JWT to get the currect user information.
