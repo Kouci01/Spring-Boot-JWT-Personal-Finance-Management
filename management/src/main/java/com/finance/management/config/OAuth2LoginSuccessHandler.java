@@ -34,13 +34,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // Add token to response
         response.addHeader("Authorization", "Bearer " + jwtToken);
 
-        Cookie jwtCookie = new Cookie("jwt", jwtToken);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(7200);
-        response.addCookie(jwtCookie);
-
         HttpSession session = request.getSession(true); // Create a session if it doesn't exist
         session.setAttribute("jwt", jwtToken);
 

@@ -2,10 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.finance.management.mapper.TransactionMapper">
     <insert id="insertTransaction" parameterType="com.finance.management.model.Transaction">
-        INSERT INTO transactions (amount, description, user_id, category_id, date)
+        INSERT INTO transactions (amount, description, user_id, goal_id,category_id, date)
         VALUES
         <foreach collection="transaction" item="tr" separator=",">
-            (#{tr.amount}, #{tr.description}, #{tr.userId} ,#{tr.categoryId}, CURDATE())
+            (#{tr.amount},
+            #{tr.description},
+            #{tr.userId},
+            (SELECT goal_id
+                FROM goals
+                WHERE user_id = #{tr.userId}
+                and status = 'In Progress'
+                and curdate() between start_date and end_date
+                LIMIT 1),
+            #{tr.categoryId},
+            CURDATE())
         </foreach>
     </insert>
     <update id="updateTransaction" parameterType="com.finance.management.model.Transaction">
@@ -19,6 +29,7 @@
                 ,category_id = #{categoryId}
             </if>
         WHERE id = #{id}
+        and goal_id = #{goalId}
     </update>
     <select id="getTransactions" parameterType="com.finance.management.model.Transaction" resultType="com.finance.management.model.Transaction">
         SELECT t.*, c.name as category_name FROM transactions t
@@ -40,6 +51,15 @@
             <if test="userId!=null and ''!=userId">
                 and t.user_id = #{userId}
             </if>
+            <if test="date!=null and ''!=date">
+                AND t.date BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test="goalId!=null and ''!=goalId">
+                and t.goal_id = #{goalId}
+            </if>
+            <if test="id!=null and ''!=id">
+                and t.id = #{id}
+            </if>
         </where>
     </select>
 
@@ -50,6 +70,7 @@
         FROM categories c
         LEFT JOIN transactions t ON
             c.id = t.category_id AND t.user_id = #{userId} AND t.date BETWEEN #{startDate} AND #{endDate}
+            and t.goal_id = #{goalId}
         GROUP BY
             c.name
     </select>

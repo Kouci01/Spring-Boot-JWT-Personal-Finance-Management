@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finance.management.mapper.GoalMapper">
+    <insert id="createGoal" parameterType="com.finance.management.model.Goal">
+        INSERT INTO goals (user_id, goal_name, target_amount, current_amount, start_date, end_date, status)
+        VALUES
+            (#{userId}, #{goalName}, #{targetAmount}, #{currentAmount}, curdate(), #{endDate}, 'In Progress')
+    </insert>
+    <select id="findCurrentGoals" parameterType="com.finance.management.model.Goal" resultType="com.finance.management.model.Goal">
+        SELECT *, (target_amount - current_amount) as `amount_left_to_achieve`, (current_amount / target_amount) * 100 AS progress_percentage
+        FROM goals
+        <where>
+            <if test="goalName!=null and ''!=goalName">
+                <bind name="goalNameLike" value="'%' + goalName + '%'"/>
+                and goal_name like goalNameLike
+            </if>
+            <if test="status!=null and ''!=status">
+                and status = #{status}
+            </if>
+            and curdate() between start_date and end_date
+            and user_id = #{userId}
+        </where>
+    </select>
+    <update id="updateGoal" parameterType="com.finance.management.model.Goal">
+        UPDATE Goals
+        <set>
+            <if test="currentAmount!=null and ''!=currentAmount">
+                current_amount = #{currentAmount},
+            </if>
+            <if test="targetAmount!=null and ''!=targetAmount">
+                target_amount = #{targetAmount},
+            </if>
+            <if test="endDate!=null and ''!=endDate">
+                end_date = #{endDate},
+            </if>
+            <if test="goalName!=null and ''!=goalName">
+                goal_name = #{goalName},
+            </if>
+            <if test="status!=null and ''!=status">
+                status = #{status},
+            </if>
+            updated_at = CURRENT_TIMESTAMP
+        </set>
+        <where>
+            goal_id = #{goalId}
+            and user_id = #{userId}
+            <if test="dateRequest!=null and ''!=dateRequest">
+                and #{dateRequest} between start_date and end_date
+            </if>
+            <if test="dateRequest==null or ''==dateRequest">
+                and curdate() between start_date and end_date
+            </if>
+            and status != 'Completed'
+        </where>
+    </update>
+    <select id="getGoalNearDeadline" parameterType="com.finance.management.model.Goal" resultType="com.finance.management.model.Goal">
+        SELECT goal_id, goal_name, target_amount, current_amount, end_date
+        FROM Goals
+        WHERE user_id = #{userId}
+            AND end_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+            AND status = 'In Progress'
+        ORDER BY end_date ASC;
+    </select>
+</mapper>

@@ -10,6 +10,7 @@ public class Transaction {
 	private Double amount;
 	private String description;
 	private Long userId;
+	private Long goalId;
 	private Long categoryId;
 	private Date date;
 	private String categoryName;
@@ -86,5 +87,13 @@ public class Transaction {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public Long getGoalId() {
+		return goalId;
+	}
+
+	public void setGoalId(Long goalId) {
+		this.goalId = goalId;
 	}
 }

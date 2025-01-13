@@ -1,7 +1,6 @@
 package com.finance.management.controller;
 
 import com.finance.management.model.Category;
-import com.finance.management.model.Transaction;
 import com.finance.management.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
