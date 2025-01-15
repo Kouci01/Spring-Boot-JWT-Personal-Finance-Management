@@ -16,6 +16,8 @@ public class Transaction {
 	private String categoryName;
 	private String startDate;
 	private String endDate;
+	private String goalName;
+	private String status;
 
 	public String getStartDate() {
 		return startDate;
@@ -95,5 +97,21 @@ public class Transaction {
 
 	public void setGoalId(Long goalId) {
 		this.goalId = goalId;
+	}
+
+	public String getGoalName() {
+		return goalName;
+	}
+
+	public void setGoalName(String goalName) {
+		this.goalName = goalName;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

@@ -36,15 +36,10 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequestDTO request, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequestDTO request, HttpSession session) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         String token = JwtHelper.generateToken(request.email());
-        Cookie jwtCookie = new Cookie("jwt", token);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(7200);
-        response.addCookie(jwtCookie);
+        session.setAttribute("jwt", token);
         return ResponseEntity.ok(new LoginResponse(request.email(), token));
     }
 

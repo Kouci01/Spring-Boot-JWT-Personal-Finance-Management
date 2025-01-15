@@ -11,9 +11,6 @@ import java.io.IOException;
 public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        System.out.println("Authentication failed: " + exception.getMessage());
-
-        // Optionally redirect to a failure page or handle the failure
-        response.sendRedirect("/auth/login?error=true");
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Authentication required");
     }
 }

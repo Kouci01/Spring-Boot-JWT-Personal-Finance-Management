@@ -6,7 +6,6 @@ import com.finance.management.model.Transaction;
 import com.finance.management.model.User;
 import com.finance.management.service.FinanceService;
 import com.finance.management.service.GoalService;
-import com.finance.management.service.UserService;
 import com.finance.management.utils.EmailUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:63342")
 @RestController
 @RequestMapping("/api/finance")
 public class FinanceController {
@@ -114,6 +114,17 @@ public class FinanceController {
         if(user.isPresent()){
             transaction.setUserId(user.get().getId());
             return ResponseEntity.ok(financeService.yearlyTrends(transaction));
+        }
+        return ResponseEntity.badRequest().body("Token authorization is expired");
+    }
+
+    @GetMapping("/transactions/goals")
+    public ResponseEntity<?> transactionGoals(Transaction transaction, HttpServletRequest request){
+        String email = EmailUtils.getEmail(request);
+        Optional<User> user = userMapper.findByEmail(email);
+        if(user.isPresent()){
+            transaction.setUserId(user.get().getId());
+            return ResponseEntity.ok(financeService.getTransactionGoalsByMonth(transaction));
         }
         return ResponseEntity.badRequest().body("Token authorization is expired");
     }

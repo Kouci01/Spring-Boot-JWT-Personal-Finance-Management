@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="dashboard-container">
+        <header>
+            <h1>Personal Finance Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#transactions">Transactions</a></li>
+                    <li><a href="#reports">Reports</a></li>
+                    <li><a href="#settings">Settings</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section id="overview" class="section">
+                <h2>Overview</h2>
+                <div class="card">
+                    <h3>Total Balance</h3>
+                    <p id="total-balance">IDR 0.00</p>
+                </div>
+                <div class="card">
+                    <h3>Monthly Income</h3>
+                    <p id="monthly-income">IDR 0.00</p>
+                </div>
+                <div class="card">
+                    <h3>Monthly Expenses</h3>
+                    <p id="monthly-expenses">IDR 0.00</p>
+                </div>
+            </section>
+
+            <section id="transactions" class="section">
+                <h2>Transactions Goals</h2>
+                <div class="tabs" id="category-tabs">
+                    <!-- Tabs will be dynamically added here -->
+                </div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody id="transaction-list">
+                    <!-- Transactions will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </section>
+
+
+            <section id="reports" class="section">
+                <h2>Reports</h2>
+                <canvas id="report-chart"></canvas>
+            </section>
+
+            <section id="settings" class="section">
+                <h2>Settings</h2>
+                <form id="settings-form">
+                    <label for="currency">Currency:</label>
+                    <select id="currency" name="currency">
+                        <option value="USD">IDR</option>
+                    </select>
+
+                    <button type="submit">Save Settings</button>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Personal Finance Manager</p>
+        </footer>
+    </div>
+</body>
+<script src="/static/js/index.js"></script>
+</html>

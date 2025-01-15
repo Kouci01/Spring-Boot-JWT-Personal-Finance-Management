@@ -3,10 +3,12 @@ package com.finance.management.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.management.controller.dto.ApiErrorResponse;
 import com.finance.management.service.impl.UserDetailsServiceImpl;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -40,9 +41,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
 //      If the accessToken is null. It will pass the request to next filter in the chain.
 //      Any login and signup requests will not have jwt token in their header, therefore they will be passed to next filter chain.
-            if (token == null) {
-                filterChain.doFilter(request, response);
-                return;
+            if (token == null && !request.getRequestURI().contains("login") && !request.getRequestURI().contains("signup") ) {
+                throw new AccessDeniedException("Access denied: Forbidden Request");
             }
 //       If any accessToken is present, then it will validate the token and then authenticate the request in security context
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -51,14 +51,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, null);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }else {
+                    // Return a 401 Unauthorized if the token is invalid or expired
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Invalid or expired JWT token");
+                    return; // Do not continue the filter chain if the token is invalid
                 }
             }
 
             filterChain.doFilter(request, response);
-        } catch (AccessDeniedException e) {
-            ApiErrorResponse errorResponse = new ApiErrorResponse(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write(toJson(errorResponse));
+        } catch (AccessDeniedException ex) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: " + ex.getMessage());
+        } catch (JwtException | IllegalArgumentException ex) {
+            // Handle any JWT-specific exceptions here
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
+        } catch (Exception ex) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
         }
     }
 

@@ -73,4 +73,9 @@ public class FinanceServiceImpl implements FinanceService {
     public List<Summary> yearlyTrends(Transaction transaction) {
         return transactionMapper.yearlyTrends(transaction);
     }
+
+    @Override
+    public List<Transaction> getTransactionGoalsByMonth(Transaction transaction) {
+        return transactionMapper.getTransactionGoalsByMonth(transaction);
+    }
 }

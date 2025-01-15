@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/static/css/auth.css">
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Login</h2>
+    <form id="login-form">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <button id="google-login" onclick="loginWithGoogle()">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png" alt="Google Icon" class="google-icon">
+        Login with Google
+    </button>
+
+    <p>Don't have an account? <a href="register.html">Register here</a></p>
+</div>
+
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script src="/static/js/login.js"></script>
+
+</body>
+</html>

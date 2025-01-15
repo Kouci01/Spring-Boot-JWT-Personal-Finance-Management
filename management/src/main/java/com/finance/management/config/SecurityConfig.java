@@ -1,5 +1,6 @@
 package com.finance.management.config;
 
+import com.finance.management.service.UserService;
 import com.finance.management.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,16 +24,21 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
-    public SecurityConfig (UserDetailsServiceImpl userDetailsService, JwtAuthFilter jwtAuthFilter){
+    public SecurityConfig (UserDetailsServiceImpl userDetailsService, JwtAuthFilter jwtAuthFilter, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler){
         this.userDetailsService = userDetailsService;
         this.jwtAuthFilter = jwtAuthFilter;
+        this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler;
     }
 
     @Bean
@@ -43,28 +49,42 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         return http
-                .cors(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .cors().and()
+                .csrf().disable()
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/signup/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/authentication-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/finance/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/finance/**").authenticated()
+                        .requestMatchers(HttpMethod.OPTIONS, "/api/finance/**").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(oauth2 -> oauth2
-//                .loginPage("/oauth2/authorization/google") // Trigger Google login
-                .successHandler(new OAuth2LoginSuccessHandler()) // Handle successful login
-                .failureHandler(new OAuth2LoginFailureHandler())) // Redirect after failure
+                    .loginPage("/oauth2/authorization/google") // Trigger Google login
+                    .successHandler(oAuth2LoginSuccessHandler) // Handle successful login
+                    .failureHandler(new OAuth2LoginFailureHandler())) // Redirect after failure
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(oAuth2LoginAuthenticationProvider(accessTokenResponseClient(), oAuth2UserService()))
                 .authenticationManager(authenticationManager)
-
-
-//        Add JWT token filter
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:63342"); // Allow your frontend's origin
+        configuration.addAllowedMethod("*"); // Allow all HTTP methods
+        configuration.addAllowedHeader("*"); // Allow all headers
+        configuration.setAllowCredentials(true); // Allow credentials
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Apply CORS settings to all endpoints
+        return source;
+    }
+
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {

@@ -11,4 +11,5 @@ public interface FinanceService {
     List<Transaction> getTransactions(Transaction transaction);
     List<Summary> incomeExpenseSummary(Transaction transaction);
     List<Summary> yearlyTrends(Transaction transaction);
+    List<Transaction> getTransactionGoalsByMonth(Transaction transaction);
 }

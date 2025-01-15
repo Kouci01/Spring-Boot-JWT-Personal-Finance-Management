@@ -69,8 +69,16 @@
             COALESCE(SUM(t.amount), 0) AS total
         FROM categories c
         LEFT JOIN transactions t ON
-            c.id = t.category_id AND t.user_id = #{userId} AND t.date BETWEEN #{startDate} AND #{endDate}
-            and t.goal_id = #{goalId}
+            c.id = t.category_id
+                <if test="userId!=null and ''!=userId">
+                    AND t.user_id = #{userId}
+                </if>
+                <if test="startDate!=null and ''!=startDate and endDate!=null and ''!=endDate">
+                    AND t.date BETWEEN #{startDate} AND #{endDate}
+                </if>
+                <if test="goalId!=null and ''!=goalId">
+                    and t.goal_id = #{goalId}
+                </if>
         GROUP BY
             c.name
     </select>
@@ -91,5 +99,13 @@
               WHERE user_id = #{userId} and c.name != 'Income'
               GROUP BY YEAR(t.date), MONTH(t.date)
               ORDER BY year, month) as expense ON income.year = expense.year AND income.month = expense.month
+    </select>
+
+    <select id="getTransactionGoalsByMonth" parameterType="com.finance.management.model.Transaction" resultType="com.finance.management.model.Transaction">
+        SELECT t.*,g.goal_name, g.status, g.start_date, g.end_date
+        FROM transactions t
+                 JOIN goals g ON t.goal_id = g.goal_id
+        WHERE t.user_id = #{userId}
+          and g.start_date between #{startDate} and #{endDate}
     </select>
 </mapper>
