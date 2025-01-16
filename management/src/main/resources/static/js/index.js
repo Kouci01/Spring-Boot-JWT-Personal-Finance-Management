@@ -15,6 +15,8 @@ if (token) {
     const url = new URL(window.location.href);
     url.searchParams.delete("token");
     window.history.replaceState(null, "", url); // Update URL without refreshing
+}else if(sessionStorage.getItem("jwt") === null){
+    window.location.href = "login.html";
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -23,10 +25,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     let firstDay = new Date(date.getFullYear(), date.getMonth(), 2).toISOString().split('T')[0];
     let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().split('T')[0];;
 
-    const url = "http://localhost:8080/api/finance/transactions/summary"+ "?startDate="+ firstDay + "&endDate=" +lastDay;
+    const url = "http://localhost:8080/api/finance/transactions"
     const token = sessionStorage.getItem("jwt")  // Replace with your actual token
 
-    const response = await fetch(url, {
+    const userResponse = await fetch("http://localhost:8080/auth/user-info", {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -34,11 +36,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    if (!response.ok){
+    if(userResponse.ok){
+        const userData = await userResponse.json();
+        document.getElementById("user-label").innerHTML = userData.name;
+    }
+
+    let response = await fetch(url+"/summary?startDate="+ firstDay + "&endDate=" +lastDay, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        mode: "cors"
+    });
+
+    if(response.status === 403){
+        alert("Session expired please login again");
+        sessionStorage.removeItem("jwt")
+        window.location.href = "login.html";
+    } else if (!response.ok){
         throw new Error('Network response was not ok');
     }
 
-    const datas = await response.json();
+    let datas = await response.json();
     let dataLabels = [];
     let dataAmount = [];
     let monthlyIncome = 0;
@@ -73,19 +93,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Populate Transactions Table
     const tabsContainer = document.getElementById('category-tabs');
     const transactionList = document.getElementById('transaction-list');
+    const transactionSummary = document.getElementById('transaction-summary');
 
-    // Sample transactions - Replace this with dynamic fetching from your backend
-    const transactions = [
-        { date: '2025-01-01', description: 'Salary', category: 'Income', amount: 'IDR 5,000,000' },
-        { date: '2025-01-05', description: 'Groceries', category: 'Expenses', amount: 'IDR 500,000' },
-        { date: '2025-01-10', description: 'Investment', category: 'Savings', amount: 'IDR 1,000,000' },
-        { date: '2025-01-12', description: 'Bonus', category: 'Income', amount: 'IDR 2,000,000' },
-        { date: '2025-01-14', description: 'Dining Out', category: 'Expenses', amount: 'IDR 300,000' }
-    ];
+    response = await fetch(url+"/goals?startDate="+ firstDay + "&endDate=" +lastDay, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        mode: "cors"
+    });
+
+    datas = await response.json();
+    console.log(datas);
 
     // Function to create tabs dynamically based on transaction categories
     function generateTabs() {
-        const categories = ['All', ...new Set(transactions.map(txn => txn.category))];
+        const categories = ['All', ...new Set(datas.map(goal => goal.goalName))];
 
         categories.forEach(category => {
             const tabButton = document.createElement('button');
@@ -115,20 +139,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Function to filter and display transactions based on selected category
     function filterTransactions(category) {
         transactionList.innerHTML = ''; // Clear current transactions
+        transactionSummary.innerHTML = '';
 
-        const filteredTransactions = category === 'All' ? transactions : transactions.filter(txn => txn.category === category);
+        const filteredTransactions = category === 'All' ? datas : datas.filter(goal => goal.goalName === category);
+
+        let totalAmount = 0;
+        const status = category === 'All' ? '-' : filteredTransactions[0].status;
 
         filteredTransactions.forEach(txn => {
             const row = `
                 <tr>
                     <td>${txn.date}</td>
                     <td>${txn.description}</td>
-                    <td>${txn.category}</td>
-                    <td>${txn.amount}</td>
+                    <td>${txn.goalName}</td>
+                    <td>IDR ${txn.amount}</td>
                 </tr>
             `;
             transactionList.insertAdjacentHTML('beforeend', row);
+            totalAmount += txn.amount;
         });
+
+        const summaryRow = `
+            <tr>
+                <td colspan="3" style="text-align: end"><strong>Total</strong></td>
+                <td><strong>IDR ${totalAmount}</strong></td>
+            </tr>
+            <tr>
+                <td colspan="3" style="text-align: end"><strong>Status</strong></td>
+                <td><strong>${status}</strong></td>
+            </tr>
+        `;
+        transactionSummary.insertAdjacentHTML('beforeend', summaryRow);
     }
 
     // Initialize the tabs and display transactions for "All" category by default
@@ -207,5 +248,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         event.preventDefault();
         const currency = document.getElementById("currency").value;
         alert(`Settings saved. Currency: ${currency}`);
+    });
+
+    const dropdownButton = document.getElementById('user-dropdown-button');
+    const dropdownMenu = document.getElementById('user-dropdown-menu');
+
+    // Toggle dropdown menu visibility
+    dropdownButton.addEventListener('click', () => {
+        const dropdown = dropdownButton.parentElement;
+        dropdown.classList.toggle('active');
+    });
+
+    // Close dropdown menu when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.user-dropdown')) {
+            document.querySelectorAll('.user-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    });
+
+    document.getElementById("logout").addEventListener("click", ()=>{
+        sessionStorage.removeItem("jwt");
+        alert("Logout successful");
+        window.location.href = "login.html";
     });
 });

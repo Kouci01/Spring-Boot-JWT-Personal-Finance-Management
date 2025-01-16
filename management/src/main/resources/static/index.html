@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/index.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
     <div id="dashboard-container">
@@ -19,6 +20,16 @@
                     <li><a href="#settings">Settings</a></li>
                 </ul>
             </nav>
+            <div class="user-dropdown">
+                <button id="user-dropdown-button">
+                    <i id="user-icon" class="bi bi-person-circle"></i>
+                    <span id="user-label">User</span>
+                </button>
+                <div id="user-dropdown-menu" class="dropdown-content">
+                    <a href="#profile">Profile Info</a>
+                    <a href="#logout" id="logout">Logout</a>
+                </div>
+            </div>
         </header>
 
         <main>
@@ -55,6 +66,9 @@
                     <tbody id="transaction-list">
                     <!-- Transactions will be dynamically inserted here -->
                     </tbody>
+                    <tfoot id="transaction-summary">
+                    <!-- Summary row will be dynamically inserted here -->
+                    </tfoot>
                 </table>
             </section>
 

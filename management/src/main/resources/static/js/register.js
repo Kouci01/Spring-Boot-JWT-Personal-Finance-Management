@@ -18,6 +18,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({name, email, password})
+        // mode: "cors"
     });
 
     if (response.ok) {

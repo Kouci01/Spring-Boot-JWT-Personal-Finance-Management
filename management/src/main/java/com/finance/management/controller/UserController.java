@@ -18,6 +18,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/auth")
 public class UserController {
@@ -68,5 +70,14 @@ public class UserController {
         }
     }
 
+    @GetMapping("/user-info")
+    public ResponseEntity<?> findUserInfo(HttpServletRequest request){
+        String email = EmailUtils.getEmail(request);
+        Optional<User> user = userService.findByEmail(email);
+        if(user.isPresent()){
+            return ResponseEntity.ok(user.get());
+        }
+        return ResponseEntity.status(204).body("No user information found");
+    }
 
 }

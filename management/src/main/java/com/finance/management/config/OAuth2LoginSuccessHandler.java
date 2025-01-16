@@ -58,7 +58,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 //        response.setContentType("application/json");
 //        response.setStatus(HttpServletResponse.SC_OK);
 
-        response.sendRedirect("http://localhost:63342/management/static/index.html?token=" + jwtToken);
+        response.sendRedirect("http://localhost:53423/management/static/index.html?token=" + jwtToken);
 
 //        // Write JSON to response
 //        ObjectMapper objectMapper = new ObjectMapper();

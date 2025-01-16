@@ -1,5 +1,3 @@
-/* styles.css */
-
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -17,8 +15,22 @@ body {
 header {
     background-color: #4CAF50;
     color: white;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+header .title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
     text-align: center;
+}
+
+header nav {
+    width: 100%;
 }
 
 header nav ul {
@@ -38,6 +50,59 @@ header nav ul li a {
     color: white;
     text-decoration: none;
     font-weight: bold;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+}
+
+#user-dropdown-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#user-dropdown-button:hover {
+    background-color: #45a049;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    min-width: 150px;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: block;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none;
+}
+
+/* Show the dropdown when active */
+.user-dropdown.active .dropdown-content {
+    display: block;
 }
 
 main {
@@ -124,4 +189,3 @@ footer {
 .tab-button:hover {
     background-color: #e0e0e0;
 }
-

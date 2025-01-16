@@ -1,6 +1,5 @@
 package com.finance.management.service.impl;
 
-import com.finance.management.config.OAuth2LoginSuccessHandler;
 import com.finance.management.controller.dto.SignUpRequestDTO;
 import com.finance.management.mapper.UserMapper;
 import com.finance.management.model.User;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Transactional(readOnly = true)
@@ -54,4 +51,10 @@ public class UserServiceImpl implements UserService {
             userMapper.addUser(user);
         }
     }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userMapper.findByEmail(email);
+    }
+
 }

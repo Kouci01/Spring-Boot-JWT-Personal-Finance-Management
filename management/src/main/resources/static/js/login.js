@@ -11,6 +11,7 @@ document.getElementById('login-form').addEventListener('submit', async function 
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({email, password})
+        // mode: "cors"
     });
 
     const data = await response.json();
