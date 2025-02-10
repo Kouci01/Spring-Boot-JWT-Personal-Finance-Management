@@ -10,6 +10,7 @@
         SELECT *, (target_amount - current_amount) as `amount_left_to_achieve`, (current_amount / target_amount) * 100 AS progress_percentage
         FROM goals
         <where>
+            curdate() between start_date and end_date
             <if test="goalName!=null and ''!=goalName">
                 <bind name="goalNameLike" value="'%' + goalName + '%'"/>
                 and goal_name like goalNameLike
@@ -17,7 +18,6 @@
             <if test="status!=null and ''!=status">
                 and status = #{status}
             </if>
-            and curdate() between start_date and end_date
             and user_id = #{userId}
         </where>
     </select>

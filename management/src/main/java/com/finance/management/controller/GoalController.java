@@ -30,6 +30,7 @@ public class GoalController {
         Optional<User> user= userMapper.findByEmail(email);
         if(user.isPresent()){
             goals.setUserId(user.get().getId());
+            goals.setCurrentAmount((double) 0);
 //            Find if there are active goals
             Goal query = new Goal();
             query.setUserId(goals.getUserId());
@@ -39,7 +40,7 @@ public class GoalController {
                 goalService.createGoal(goals);
                 return ResponseEntity.ok("Goals created successfully");
             }else{
-                return ResponseEntity.ok("There are current goals that still active");
+                return ResponseEntity.badRequest().body("There are current goals that still active");
             }
         }else{
             return ResponseEntity.badRequest().body("Internal Error");

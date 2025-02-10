@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     datas = await response.json();
-    console.log(datas);
+    // console.log(datas);
 
     // Function to create tabs dynamically based on transaction categories
     function generateTabs() {
