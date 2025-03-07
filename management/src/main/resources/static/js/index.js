@@ -20,6 +20,9 @@ if (token) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // Ensure modal is hidden when the page loads
+    const transactionModal = document.getElementById("transaction-modal");
+    transactionModal.style.display = "none";
     // Sample data for the dashboard
     let date = new Date();
     let firstDay = new Date(date.getFullYear(), date.getMonth(), 2).toISOString().split('T')[0];
@@ -74,17 +77,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     let totalBalance = monthlyIncome - monthlyExpenses;
 
-    const sampleData = {
-        totalBalance: 5000.00,
-        monthlyIncome: 2000.00,
-        monthlyExpenses: 1500.00,
-        transactions: [
-            {date: "2025-01-01", description: "Grocery Shopping", category: "Food", amount: -100.00},
-            {date: "2025-01-05", description: "Salary", category: "Income", amount: 2000.00},
-            {date: "2025-01-10", description: "Utility Bill", category: "Bills", amount: -150.00}
-        ]
-    };
-
     // Update Overview Section
     document.getElementById("total-balance").textContent = `IDR ${totalBalance.toFixed(2)}`;
     document.getElementById("monthly-income").textContent = `IDR ${monthlyIncome.toFixed(2)}`;
@@ -94,6 +86,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const tabsContainer = document.getElementById('category-tabs');
     const transactionList = document.getElementById('transaction-list');
     const transactionSummary = document.getElementById('transaction-summary');
+    const addTransactionBtn = document.getElementById("add-transaction-btn");
+
+    const closeModal = document.querySelector(".close");
+    const transactionInputBody = document.getElementById("transaction-input-body");
+    const addRowBtn = document.getElementById("add-row-btn");
+    const saveTransactionsBtn = document.getElementById("save-transactions-btn");
 
     response = await fetch(url+"/goals?startDate="+ firstDay + "&endDate=" +lastDay, {
         method: 'GET',
@@ -151,12 +149,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <tr>
                     <td>${txn.date}</td>
                     <td>${txn.description}</td>
-                    <td>${txn.goalName}</td>
+                    <td>${txn.categoryName}</td>
                     <td>IDR ${txn.amount}</td>
                 </tr>
             `;
             transactionList.insertAdjacentHTML('beforeend', row);
-            totalAmount += txn.amount;
+            if(txn.categoryName.includes("Income")){
+                totalAmount += txn.amount;
+            }else{
+                totalAmount -= txn.amount;
+            }
         });
 
         const summaryRow = `
@@ -272,5 +274,140 @@ document.addEventListener("DOMContentLoaded", async () => {
         sessionStorage.removeItem("jwt");
         alert("Logout successful");
         window.location.href = "login.html";
+    });
+
+    // API URL to get the categories (modify this to your actual API endpoint)
+
+    // Function to fetch categories and populate the dropdown
+    async function fetchCategories() {
+        try {
+            const response = await fetch("http://localhost:8080/api/finance/categories", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                mode: "cors"
+            });
+
+            const categories = await response.json();
+            const categorySelectElements = document.querySelectorAll('.transaction-category');
+
+            categorySelectElements.forEach(selectElement => {
+                // Clear the existing options
+                selectElement.innerHTML = '';
+
+                // Add a default "Select" option
+                const defaultOption = document.createElement('option');
+                defaultOption.textContent = 'Select Category';
+                selectElement.appendChild(defaultOption);
+
+                // Add the fetched categories as options
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;  // Assuming `id` is the value for the category
+                    option.textContent = category.name;  // Assuming `name` is the display text for the category
+                    selectElement.appendChild(option);
+                });
+            });
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    }
+
+    // Open Modal only when the button is clicked
+    addTransactionBtn.addEventListener("click", function () {
+        transactionModal.style.display = "flex";
+        fetchCategories();  // Fetch categories when the modal opens
+    });
+
+    // Close Modal when close button is clicked
+    closeModal.addEventListener("click", function () {
+        transactionModal.style.display = "none";
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener("click", function (event) {
+        if (event.target === transactionModal) {
+            transactionModal.style.display = "none";
+        }
+    });
+
+    // Add new row to transaction input table
+    addRowBtn.addEventListener("click", function () {
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td><input type="text" class="transaction-description" required></td>
+            <td>
+                <select class="transaction-category" required>
+                    <!-- Categories will be populated here -->
+                </select>
+            </td>
+            <td><input type="number" class="transaction-amount" required></td>
+            <td><button class="remove-row">❌</button></td>
+        `;
+        transactionInputBody.appendChild(newRow);
+        fetchCategories();  // Fetch categories for new row
+    });
+
+    // Remove row functionality
+    transactionInputBody.addEventListener("click", function (event) {
+        if (event.target.classList.contains("remove-row")) {
+            event.target.closest("tr").remove();
+        }
+    });
+
+    // Save transactions and insert into main table
+    saveTransactionsBtn.addEventListener("click", async function () {
+        const transactionList = [];
+        const rows = document.querySelectorAll("#transaction-input-body tr");
+
+        rows.forEach(row => {
+            const description = row.querySelector(".transaction-description").value;
+            const category = row.querySelector(".transaction-category").value;
+            const amount = row.querySelector(".transaction-amount").value;
+
+            if (date && description && category && amount) {
+                transactionList.push({
+                    amount: amount,
+                    description: description,
+                    categoryId: category
+                });
+            }
+        });
+
+        const response = await fetch("http://localhost:8080/api/finance/transactions", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(transactionList),
+            mode: "cors"
+        });
+
+        if (response.ok) {
+            alert('Transaction added successful');
+            window.location.href = "index.html";
+        } else {
+            alert('Transaction error');
+        }
+
+        // Reset the input table to one row
+        transactionInputBody.innerHTML = `
+            <tr>
+                <td><input type="text" class="transaction-description" required></td>
+                <td>
+                    <select class="transaction-category" required>
+                        <!-- Categories will be populated here -->
+                    </select>
+                </td>
+                <td><input type="number" class="transaction-amount" required></td>
+                <td><button class="remove-row">❌</button></td>
+            </tr>
+        `;
+
+        // Hide the modal after saving
+        transactionModal.style.display = "none";
     });
 });

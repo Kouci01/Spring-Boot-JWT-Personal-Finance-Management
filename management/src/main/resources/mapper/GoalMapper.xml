@@ -50,7 +50,9 @@
             <if test="dateRequest==null or ''==dateRequest">
                 and curdate() between start_date and end_date
             </if>
-            and status != 'Completed'
+            <if test="currentAmount!=null and ''!=currentAmount">
+                and status != 'Completed'
+            </if>
         </where>
     </update>
     <select id="getGoalNearDeadline" parameterType="com.finance.management.model.Goal" resultType="com.finance.management.model.Goal">

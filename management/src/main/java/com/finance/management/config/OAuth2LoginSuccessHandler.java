@@ -1,6 +1,7 @@
 package com.finance.management.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finance.management.controller.dto.SignUpRequestDTO;
 import com.finance.management.model.User;
 import com.finance.management.service.UserService;
 import jakarta.servlet.ServletException;
@@ -17,8 +18,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,10 +39,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String email = oAuth2User.getAttribute("email");
         String name = email.split("@")[0];
 
-        User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        userService.signUpGoogle(user);
+
+        String finalEmail = email;
+        userService.findByEmail(email).orElseGet(() -> {
+            byte[] array = new byte[7];
+            new Random().nextBytes(array);
+            String password = new String(array, Charset.forName("UTF-8"));
+            SignUpRequestDTO user = new SignUpRequestDTO(name, finalEmail, password);
+            userService.signup(user);
+            return null;
+        });
 
         if(isValidEmail(email)){
 //            Contain . before @
@@ -58,7 +67,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 //        response.setContentType("application/json");
 //        response.setStatus(HttpServletResponse.SC_OK);
 
-        response.sendRedirect("http://localhost:53423/management/static/index.html?token=" + jwtToken);
+        response.sendRedirect("http://localhost:62210/management/static/index.html?token=" + jwtToken);
 
 //        // Write JSON to response
 //        ObjectMapper objectMapper = new ObjectMapper();

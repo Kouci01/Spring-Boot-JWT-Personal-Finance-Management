@@ -33,7 +33,7 @@ public class FinanceServiceImpl implements FinanceService {
             query.setUserId(transaction.get(0).getUserId());
             query.setStatus("In Progress");
             query = goalService.findCurrentGoals(query).get(0);
-            goalService.updateGoal(query);
+            goalService.updateGoalData(query);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -53,7 +53,7 @@ public class FinanceServiceImpl implements FinanceService {
             transactionMapper.updateTransaction(transaction);
             Transaction getTransaction = transactionMapper.getTransactions(transaction).get(0);
             query.setDateRequest(getTransaction.getDate().toString());
-            goalService.updateGoal(query);
+            goalService.updateGoalData(query);
         }catch (Exception e){
             e.printStackTrace();
         }

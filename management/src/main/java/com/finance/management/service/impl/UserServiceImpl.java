@@ -41,17 +41,6 @@ public class UserServiceImpl implements UserService {
         userMapper.addUser(user);
     }
 
-    @Transactional
-    @Override
-    public void signUpGoogle(User user) {
-        Optional<User> existingUser = userMapper.findByEmail(user.getEmail());
-        if (!existingUser.isPresent()) {
-            String hashedPassword = passwordEncoder.encode(SIGNON);
-            user.setPassword(hashedPassword);
-            userMapper.addUser(user);
-        }
-    }
-
     @Override
     public Optional<User> findByEmail(String email) {
         return userMapper.findByEmail(email);

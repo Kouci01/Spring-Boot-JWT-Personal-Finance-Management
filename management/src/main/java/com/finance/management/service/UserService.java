@@ -7,6 +7,5 @@ import java.util.Optional;
 
 public interface UserService {
     void signup(SignUpRequestDTO request);
-    void signUpGoogle(User user);
     Optional<User> findByEmail(String email);
 }

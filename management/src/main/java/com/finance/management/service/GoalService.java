@@ -7,6 +7,7 @@ import java.util.List;
 public interface GoalService {
     void createGoal(Goal goals);
     List<Goal> findCurrentGoals(Goal goal);
+    void updateGoalData(Goal goal);
     void updateGoal(Goal goal);
     Goal getGoalNearDeadline(Goal goal);
 }

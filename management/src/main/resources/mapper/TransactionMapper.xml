@@ -102,9 +102,10 @@
     </select>
 
     <select id="getTransactionGoalsByMonth" parameterType="com.finance.management.model.Transaction" resultType="com.finance.management.model.Transaction">
-        SELECT t.*,g.goal_name, g.status, g.start_date, g.end_date
+        SELECT t.*,g.goal_name, g.status, g.start_date, g.end_date, c.name as category_name
         FROM transactions t
                  JOIN goals g ON t.goal_id = g.goal_id
+                 JOIN categories c ON c.id = t.category_id
         WHERE t.user_id = #{userId}
           and g.start_date between #{startDate} and #{endDate}
     </select>

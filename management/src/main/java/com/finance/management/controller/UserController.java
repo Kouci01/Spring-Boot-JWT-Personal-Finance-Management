@@ -45,30 +45,30 @@ public class UserController {
         return ResponseEntity.ok(new LoginResponse(request.email(), token));
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<?> loginRes(String error, HttpServletRequest request){
-        HttpSession session = request.getSession(false);
-        if(error.equals("true")){
-            return ResponseEntity.badRequest().body("Login Error");
-        }else{
-            if (session != null) {
-                String jwtToken = (String) session.getAttribute("jwt");
-                String email = JwtHelper.extractUsername(jwtToken);
-                if(EmailUtils.isEmailDots(email)){
-                    email = EmailUtils.revertDotsBeforeAt(email, '.');
-                }
-                String name = email.split("@")[0];
-
-                User user = new User();
-                user.setName(name);
-                user.setEmail(email);
-                userService.signUpGoogle(user);
-
-                return ResponseEntity.ok(jwtToken);
-            }
-            return ResponseEntity.ok("Login Success But Token Error");
-        }
-    }
+//    @GetMapping("/login")
+//    public ResponseEntity<?> loginRes(String error, HttpServletRequest request){
+//        HttpSession session = request.getSession(false);
+//        if(error.equals("true")){
+//            return ResponseEntity.badRequest().body("Login Error");
+//        }else{
+//            if (session != null) {
+//                String jwtToken = (String) session.getAttribute("jwt");
+//                String email = JwtHelper.extractUsername(jwtToken);
+//                if(EmailUtils.isEmailDots(email)){
+//                    email = EmailUtils.revertDotsBeforeAt(email, '.');
+//                }
+//                String name = email.split("@")[0];
+//
+//                User user = new User();
+//                user.setName(name);
+//                user.setEmail(email);
+//                userService.signUpGoogle(user);
+//
+//                return ResponseEntity.ok(jwtToken);
+//            }
+//            return ResponseEntity.ok("Login Success But Token Error");
+//        }
+//    }
 
     @GetMapping("/user-info")
     public ResponseEntity<?> findUserInfo(HttpServletRequest request){

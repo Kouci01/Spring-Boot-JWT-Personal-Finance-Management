@@ -31,7 +31,7 @@ public class GoalServiceImpl implements GoalService {
     }
 
     @Override
-    public void updateGoal(Goal goal) {
+    public void updateGoalData(Goal goal) {
 //        Get Income
         Transaction query = new Transaction();
         query.setStartDate(String.valueOf(goal.getStartDate()));
@@ -47,6 +47,11 @@ public class GoalServiceImpl implements GoalService {
         if(goal.getCurrentAmount() >= goal.getTargetAmount()){
             goal.setStatus("Completed");
         }
+        goalMapper.updateGoal(goal);
+    }
+
+    @Override
+    public void updateGoal(Goal goal) {
         goalMapper.updateGoal(goal);
     }
 

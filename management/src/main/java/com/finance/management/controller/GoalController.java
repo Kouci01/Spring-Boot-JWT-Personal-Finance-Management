@@ -48,12 +48,24 @@ public class GoalController {
     }
 
     @PutMapping("/goals")
-    public ResponseEntity<?> updateGoal(Goal goal, HttpServletRequest request){
+    public ResponseEntity<?> updateGoal(@RequestBody Goal goal, HttpServletRequest request){
         String email = EmailUtils.getEmail(request);
         Optional<User> user = userMapper.findByEmail(email);
         if(user.isPresent()){
             goal.setUserId(user.get().getId());
+
+            if(goal.getGoalName()!=null && goal.getTargetAmount()!=null && goal.getStatus().equals("In Progress") && goal.getEndDate()!=null){
+//                Validate Exist
+                Goal query = new Goal();
+                query.setUserId(goal.getUserId());
+                query.setStatus("In Progress");
+                List<Goal> findActiveGoals = goalService.findCurrentGoals(query);
+                if(!findActiveGoals.isEmpty()){
+                    return ResponseEntity.badRequest().body("There are current goals that still active");
+                }
+            }
             goalService.updateGoal(goal);
+//            Change only can update goalName, targetAmount, endDate, status
             return ResponseEntity.ok("Goals updated successfully");
         }else{
             return ResponseEntity.badRequest().body("Internal Error");

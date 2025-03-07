@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="45716c5a-4e98-4004-926a-7cbfd2d8a286" name="Changes" comment="" />
+    <list default="true" id="45716c5a-4e98-4004-926a-7cbfd2d8a286" name="Changes" comment="[ADD] Add Goal function">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/management/src/main/java/com/finance/management/config/OAuth2LoginSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/management/src/main/java/com/finance/management/config/OAuth2LoginSuccessHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/management/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/management/src/main/resources/application.properties" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,6 +15,11 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/management/src/main/java/com/finance/management/ManagementApplication.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/management/pom.xml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/management/src/main/java/com/finance/management/config/JwtAuthFilter.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="ProjectId" id="2r3Jn2ytvk2MHJwfn8kgFpyW8Vi" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -17,8 +27,21 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ExpandSpringBootJavaOptionsPanel" value="true" />
+    <property name="SONARLINT_PRECOMMIT_ANALYSIS" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/management" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Unnamed" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="Spring Security JWT" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -29,10 +52,28 @@
       <option name="presentableId" value="Default" />
       <updated>1735781989614</updated>
       <workItem from="1736138292289" duration="56000" />
+      <workItem from="1739179069100" duration="106000" />
+      <workItem from="1740965904429" duration="740000" />
+      <workItem from="1740968335537" duration="254000" />
+      <workItem from="1740968606331" duration="166000" />
+      <workItem from="1740968950474" duration="37000" />
+      <workItem from="1740969566611" duration="82000" />
     </task>
+    <task id="LOCAL-00001" summary="[ADD] Add Goal function">
+      <created>1739179131881</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1739179131881</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="[ADD] Add Goal function" />
+    <option name="LAST_COMMIT_MESSAGE" value="[ADD] Add Goal function" />
   </component>
 </project>
