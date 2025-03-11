@@ -26,7 +26,7 @@ document.getElementById('login-form').addEventListener('submit', async function 
 
 // Google Login functionality
 async function loginWithGoogle() {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google"
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
 }
 //
 // // // Initialize Google Sign-In (you can replace this with real OAuth2.0 logic)

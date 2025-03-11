@@ -17,15 +17,17 @@ document.getElementById('register-form').addEventListener('submit', async functi
     const response = await fetch("http://localhost:8080/auth/signup", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({name, email, password})
+        body: JSON.stringify({name, email, password}),
         // mode: "cors"
-    });
+    }).then(response => {
+        if (!response.ok) {
+            return response.text().then(err => { throw err });
+        }
+        else{
+            window.location.href = "login.html";
+        }
+    })
+        .catch(error => alert("Email or password is not valid"));
 
-    if (response.ok) {
-        alert('Registration successful');
-        window.location.href = "login.html";
-    } else {
-        alert('Registration failed, email already used');
-    }
 
 });

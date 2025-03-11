@@ -29,6 +29,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        System.out.println("✅ OAuth2 Authentication Successful!");
+        System.out.println("✅ User Details: " + authentication.getPrincipal());
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         String name = email.split("@")[0];
@@ -52,21 +54,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // Generate JWT token
         String jwtToken = JwtHelper.generateToken(email);
 
-
-        // Add token to response
-//        Map<String, String> responseBody = new HashMap<>();
-//        responseBody.put("token", jwtToken);
-//
-//        // Set response headers and content type
-//        response.setContentType("application/json");
-//        response.setStatus(HttpServletResponse.SC_OK);
-
-        response.sendRedirect("http://localhost:62210/management/static/index.html?token=" + jwtToken);
-
-//        // Write JSON to response
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.writeValue(response.getWriter(), responseBody);
-
+        response.sendRedirect("http://localhost:63342/management/static/index.html?token=" + jwtToken);
 
     }
 
