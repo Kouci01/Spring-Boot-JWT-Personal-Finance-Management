@@ -1,14 +1,10 @@
 package com.finance.management.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.management.controller.dto.SignUpRequestDTO;
-import com.finance.management.model.User;
 import com.finance.management.service.UserService;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
@@ -19,8 +15,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
